@@ -7,26 +7,36 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.2.0/angular-moment.min.js" integrity="sha256-BvdaZdPJc+x1dwsmn62ZkJ+4WepCjqP3xAFYrPP10F8=" crossorigin="anonymous"></script>
 </head>
 <body ng-app="certmon" ng-controller="MainController">
-  {{results.timestamp}} <button ng-click="reload()">Refresh</button>
-  <ul ng-repeat="result in results.results">
-    {{result.hostname}}
-    <ul ng-repeat="(endpoint, value) in result.endpoints">
-      {{endpoint}} <span ng-show='value.ok'>OK</span><span ng-hide='value.ok'>BOOBOO</span>
-      <span ng-show='value.err'>{{value.err}}</span><a href="" ng-click="showcert(value)" ng-hide='value.err'>{{value.expiry|date}} </a> (<time am-time-ago="value.expiry" > </time>)
+  <div style="width:48%;float:left;">
+    {{results.timestamp}} <button ng-click="reload()">Refresh</button>
+    <ul>
+      <li ng-repeat="result in results.results">
+        {{result.hostname}}
+        <ul>
+          <li ng-repeat="(endpoint, value) in result.endpoints">
+            {{endpoint}} <span ng-show='value.ok'>OK</span><span ng-hide='value.ok'>BOOBOO</span>
+            <span ng-show='value.err'>{{value.err}}</span><a href="" ng-click="showcert(value)" ng-hide='value.err'>{{value.expiry|date}} </a> (<time am-time-ago="value.expiry" > </time>)
+          </li>
+        </ul>
+      </li>
     </ul>
-  </ul>
-  <div ng-show="show">
+  </div>
+  <div style="width:48%;float:left;" ng-show="show">
     <h3>Chain viewer</h3>
-    <ul>OCSP Staple: <span ng-show="show.connectionstate.OCSPResponse">YES</span><span ng-hide="show.connectionstate.OCSPResponse">NO</span> </ul>
-    <ul ng-repeat='cert in show.connectionstate.VerifiedChains[0]'>
-      <ul>Common Name: {{cert.Subject.CommonName}}</ul>
-      <ul>Issuer: {{cert.Issuer.CommonName}}</ul>
-      <ul>DNSNames:
-        <code ng-repeat='name in cert.DNSNames'> {{name}}</code>
-      </ul>
-      <ul>NotBefore: {{cert.NotBefore}} (<time am-time-ago="cert.NotBefore"></time>)</ul>
-      <ul>NotAfter: {{cert.NotAfter}} (<time am-time-ago="cert.NotAfter"></time>)</ul>
-      <ul>IsCA: {{cert.IsCA}}</ul>
+    <ul>
+      <li>OCSP Staple: <span ng-show="show.connectionstate.OCSPResponse">YES</span><span ng-hide="show.connectionstate.OCSPResponse">NO</span> </li>
+      <li ng-repeat='cert in show.connectionstate.VerifiedChains[0]'>
+        <ul >
+          <li>Common Name: {{cert.Subject.CommonName}}</li>
+          <li>Issuer: {{cert.Issuer.CommonName}}</li>
+          <li>DNSNames:
+            <code ng-repeat='name in cert.DNSNames'> {{name}}</code>
+          </li>
+          <li>NotBefore: {{cert.NotBefore}} (<time am-time-ago="cert.NotBefore"></time>)</li>
+          <li>NotAfter: {{cert.NotAfter}} (<time am-time-ago="cert.NotAfter"></time>)</li>
+          <li>IsCA: {{cert.IsCA}}</li>
+        </ul>
+      </li>
     </ul>
 
   </div>
