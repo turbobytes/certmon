@@ -8,18 +8,25 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/turbobytes/certmon/pkg/certmon"
 )
 
 var (
-	results  certmon.Results
-	cfgfile  = flag.String("config", "config.yaml", "Path to config file. Autoreloads if changed")
-	addr     = flag.String("listen", ":8081", "Address to listen on")
-	htmlFile = flag.String("ui", "assets/index.html", "path to index.html")
+	results    certmon.Results
+	cfgfile    = flag.String("config", "config.yaml", "Path to config file. Autoreloads if changed")
+	addr       = flag.String("listen", ":8081", "Address to listen on")
+	htmlFile   = flag.String("ui", "assets/index.html", "path to index.html")
+	certExpiry = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "certmon_cert_expiry",
+		Help: "Time at which certificate expires.",
+	}, []string{"sni", "endpoint"})
 )
 
 func init() {
 	flag.Parse()
+	prometheus.MustRegister(certExpiry)
 }
 
 //TODO: Prometheus things
@@ -50,6 +57,18 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 func runtest(config certmon.Config) {
 	log.Println("Running tests")
 	results = config.Run()
+	//Update prometheus things
+	for _, result := range results.Results {
+		for endpoint, item := range result.Endpoints {
+			guage := certExpiry.With(prometheus.Labels{"sni": result.Hostname, "endpoint": endpoint})
+			val := 0.0 //0 by default
+			if item.OK {
+				val = float64(item.Expiry.Unix())
+			}
+			guage.Set(val)
+		}
+	}
+
 	log.Println("Done")
 }
 
@@ -64,6 +83,7 @@ func main() {
 		http.ServeFile(w, r, *htmlFile)
 	})
 	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {})
+	http.Handle("/metrics", promhttp.Handler())
 	go func() {
 		log.Fatal(http.ListenAndServe(*addr, nil))
 	}()
