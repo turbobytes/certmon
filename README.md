@@ -49,6 +49,10 @@ kubectl create -f svc.yaml
 - `/healthz` For health check, always responds with status 200
 - `/metrics` Prometheus exporter listing expiry times for the certificates
 
+## Screenshot
+
+![screenshot](/screenshot.png?raw=true "Screenshot")
+
 ## TODO
 
 - Meaningful logs, with error/warning level messages
