@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: certmon
+  labels:
+    k8s-app: certmon
+    version: v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: certmon
+        version: v1
+    spec:
+      containers:
+      - name: certmon
+        image: turbobytes/certmon:latest
+        command:
+        - certmon
+        args:
+        - --listen=:80
+        - --config=/etc/certmon/config.yaml
+        - --ui=/assets/index.html
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/certmon
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+      volumes:
+        - name: config-volume
+          configMap:
+            name: certmon

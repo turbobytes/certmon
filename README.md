@@ -1,6 +1,14 @@
 # certmon
 Monitor and track TLS endpoints for expiration dates of certificates
 
+## Why?
+
+Our TLS deployments span multiple certificates across servers and loadbalancers. It's currently PITA to keep track of each of them individually. Existing tools only check the endpoint they happen to resolve to at the time of the test.
+
+This tool gives us a birds eye view of certificate status across endpoints.
+
+PS: endpoint = anything (server or loadbalancer) that might be terminating TLS.
+
 ## Usage
 
 ### From source
@@ -23,8 +31,11 @@ open http://127.0.0.1:8082/
 
 ### Kubernetes
 
-TODO
-
+```
+kubectl create configmap certmon --from-file=config.yaml
+kubectl create -f dp.yaml
+kubectl create -f svc.yaml
+```
 
 ## TODO
 
