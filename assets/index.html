@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <title>certmon</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js" integrity="sha256-ABVkpwb9K9PxubvRrHMkk6wmWcIHUE9eBxNZLXYQ84k=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.8/angular.min.js" integrity="sha256-drxfSiYW94qA5Cyx5wrs8T8qV5GB45vES84r+X4zNS0=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.2.0/angular-moment.min.js" integrity="sha256-BvdaZdPJc+x1dwsmn62ZkJ+4WepCjqP3xAFYrPP10F8=" crossorigin="anonymous"></script>
+</head>
+<body ng-app="certmon" ng-controller="MainController">
+  {{results.timestamp}} <button ng-click="reload()">Refresh</button>
+  <ul ng-repeat="result in results.results">
+    {{result.hostname}}
+    <ul ng-repeat="(endpoint, value) in result.endpoints">
+      {{endpoint}} <span ng-show='value.ok'>OK</span><span ng-hide='value.ok'>BOOBOO</span>
+      <span ng-show='value.err'>{{value.err}}</span><a href="" ng-click="showcert(value)" ng-hide='value.err'>{{value.expiry|date}} </a> (<time am-time-ago="value.expiry" > </time>)
+    </ul>
+  </ul>
+  <div ng-show="show">
+    <h3>Chain viewer</h3>
+    <ul>OCSP Staple: <span ng-show="show.connectionstate.OCSPResponse">YES</span><span ng-hide="show.connectionstate.OCSPResponse">NO</span> </ul>
+    <ul ng-repeat='cert in show.connectionstate.VerifiedChains[0]'>
+      <ul>Common Name: {{cert.Subject.CommonName}}</ul>
+      <ul>Issuer: {{cert.Issuer.CommonName}}</ul>
+      <ul>DNSNames:
+        <code ng-repeat='name in cert.DNSNames'> {{name}}</code>
+      </ul>
+      <ul>NotBefore: {{cert.NotBefore}} (<time am-time-ago="cert.NotBefore"></time>)</ul>
+      <ul>NotAfter: {{cert.NotAfter}} (<time am-time-ago="cert.NotAfter"></time>)</ul>
+      <ul>IsCA: {{cert.IsCA}}</ul>
+    </ul>
+
+  </div>
+<script>
+var certmon = angular.module("certmon",['angularMoment'])
+certmon.controller('MainController', ['$scope', '$http', function($scope, $http){
+  $scope.results = []
+  $scope.showcert = function(value){
+    $scope.show = null;
+    console.log(value)
+    $scope.show = value
+  }
+  $scope.reload = function(){
+    $scope.show = null
+    $scope.results = []
+    $http.get("/results/").then(function(results){
+      console.log(results.data)
+      $scope.results = results.data
+    })
+  }
+  $scope.reload()
+}])
+</script>
+</body>

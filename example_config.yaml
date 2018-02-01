@@ -1,0 +1,14 @@
+checks:
+- hostname: www.facebook.com
+  endpoints:
+  - 179.60.192.36
+  - 157.240.20.35
+  - 31.13.90.36
+- hostname: www.linkedin.com
+  endpoints:
+  - pop-esy1-alpha.www.linkedin.com
+  - pop-tln1-alpha.www.linkedin.com
+  - pop-idb2-alpha.www.linkedin.com
+  - pop-tln1-alpha.www.linkedin.com
+  - pop-esg3-alpha.www.linkedin.com
+loop: 1h0m0s
