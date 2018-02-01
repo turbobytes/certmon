@@ -9,6 +9,11 @@ This tool gives us a birds eye view of certificate status across endpoints.
 
 PS: endpoint = anything (server or loadbalancer) that might be terminating TLS.
 
+Using mostly Go standard library, with following exceptions :-
+
+1. `github.com/prometheus/client_golang/prometheus` for prometheus exporter
+2. `github.com/fsnotify/fsnotify` for monitoring config file so that we can automatically reload if config changes.
+
 ## Usage
 
 ### From source
