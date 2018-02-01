@@ -39,10 +39,10 @@ kubectl create -f svc.yaml
 
 ## API
 
-`/` Optional HTML UI. If `index.html` was present and configured correctly
-`/results/` Last known results of the checks. See [the type](https://godoc.org/github.com/turbobytes/certmon/pkg/certmon#Results)
-`/healthz` For health check, always responds with status 200
-`/metrics` Prometheus exporter listing expiry times for the certificates
+- `/` Optional HTML UI. If `index.html` was present and configured correctly
+- `/results/` Last known results of the checks. See [the type](https://godoc.org/github.com/turbobytes/certmon/pkg/certmon#Results)
+- `/healthz` For health check, always responds with status 200
+- `/metrics` Prometheus exporter listing expiry times for the certificates
 
 ## TODO
 
