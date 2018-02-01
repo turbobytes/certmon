@@ -1,6 +1,7 @@
 checks:
-- hostname: www.facebook.com
+- hostname: www.facebook.com #The value for SNI field
   endpoints:
+  #These endpoints will be accessed over port 443 to probe for certificates
   - 179.60.192.36
   - 157.240.20.35
   - 31.13.90.36
@@ -11,4 +12,4 @@ checks:
   - pop-idb2-alpha.www.linkedin.com
   - pop-tln1-alpha.www.linkedin.com
   - pop-esg3-alpha.www.linkedin.com
-loop: 1h0m0s
+loop: 1h0m0s #The duration to wait between each check.

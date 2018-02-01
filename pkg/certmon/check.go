@@ -8,7 +8,7 @@ import (
 
 //Run runs the tests and generates result
 func (c Config) Run() Results {
-	results := Results{Results: make([]Result, len(c.Checks)), Timestamp: time.Now()}
+	results := Results{Results: make([]Result, len(c.Checks)), Timestamp: time.Now().UTC()}
 	for i, check := range c.Checks {
 		results.Results[i] = check.Run()
 	}

@@ -37,7 +37,7 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 	if ims != "" {
 		t, err := time.Parse(http.TimeFormat, ims)
 		if err == nil {
-			if !results.Timestamp.After(t) {
+			if !results.Timestamp.Truncate(time.Second).After(t) {
 				w.WriteHeader(http.StatusNotModified)
 				return
 			}

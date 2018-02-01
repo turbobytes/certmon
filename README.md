@@ -30,3 +30,5 @@ TODO
 
 - Prometheus exporter
 - Meaningful logs, with error/warning level messages
+- Add concurrency
+- Retry failures n (configurable) times
