@@ -33,6 +33,7 @@ func checkEndpoint(hostname, endpoint string) (result IndividualResult) {
 		result.Err = err.Error()
 		return
 	}
+	defer conn.Close()
 	//Can we handshake?
 	err = conn.Handshake()
 	if err != nil {
