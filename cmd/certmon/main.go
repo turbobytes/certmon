@@ -30,6 +30,19 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("last-modified", results.Timestamp.Format(http.TimeFormat))
+	w.Header().Set("Cache-control", "must-revalidate")
+	//Check if modified since
+	ims := r.Header.Get("if-modified-since")
+	if ims != "" {
+		t, err := time.Parse(http.TimeFormat, ims)
+		if err == nil {
+			if !results.Timestamp.After(t) {
+				w.WriteHeader(http.StatusNotModified)
+				return
+			}
+		}
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(b)
 }
